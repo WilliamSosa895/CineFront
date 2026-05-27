@@ -8,6 +8,10 @@ export const getAllMovies = () => {
   return apiClient.get('/movies/all');
 }
 
+export const getAllAdminMovies = () => {
+  return apiClient.get('/movies/admin/all');
+}
+
 export const getStats = () => {
   return apiClient.get('/admin/stats');
 }

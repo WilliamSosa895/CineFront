@@ -221,6 +221,10 @@ export default function PagoPage() {
 
       await createPurchase({ idShowtime, seats: seatsConverted });
 
+      // Mostrar éxito inmediatamente: el modal no debe depender de la lectura posterior
+      // del historial, porque esa consulta puede fallar aunque la compra ya se haya guardado.
+      setShowModal(true);
+
       // ✅ Traer el folio y el total REAL (totalAmount) para el modal
       try {
         const purchasesRes = await getMyPurchases();
@@ -235,8 +239,6 @@ export default function PagoPage() {
       } catch (e2) {
         console.error(e2);
       }
-
-      setShowModal(true);
     } catch (err) {
       console.error(err);
 

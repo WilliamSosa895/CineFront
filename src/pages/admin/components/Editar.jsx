@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
-import { getInitialTime } from "../../../utils/dataFormat";
-import { updateRoom, getAllMovies, getAllRooms } from "../../../api/UserApi";
+import { getInitialTime, getInitialDate, buildTimestampFromDateAndTime } from "../../../utils/dataFormat";
+import { updateRoom, getAllAdminMovies, getAllRooms } from "../../../api/UserApi";
 
 const Editar = ({ showtime, onCancel, onUpdated }) => {
   const [movies, setMovies] = useState([]);
@@ -9,6 +9,7 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
   const [formData, setFormData] = useState({
     movieId: showtime?.movie?.id ?? "",
     roomId: showtime?.room?.idRoom ?? "",
+    date: getInitialDate(showtime) || "",
     time: getInitialTime(showtime) || "",
     language: showtime?.languaje || showtime?.language || "",
   });
@@ -18,7 +19,7 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getAllMovies()
+    getAllAdminMovies()
       .then((res) => {
         const data = res.data || res || [];
         const safe = Array.isArray(data) ? data : [];
@@ -43,6 +44,7 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
     const newErrors = {};
     if (!formData.movieId) newErrors.movieId = "La película es obligatoria.";
     if (!formData.roomId) newErrors.roomId = "La sala es obligatoria.";
+    if (!formData.date) newErrors.date = "La fecha es obligatoria.";
     if (!formData.time) newErrors.time = "La hora es obligatoria.";
     if (!formData.language) newErrors.language = "El idioma es obligatorio.";
     
@@ -64,19 +66,12 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
   };
 
   const buildPayload = () => {
-    const baseDate = showtime?.showtime
-      ? new Date(showtime.showtime)
-      : new Date();
-
-    if (formData.time) {
-      const [hours, minutes] = formData.time.split(":");
-      baseDate.setHours(Number(hours), Number(minutes), 0, 0);
-    }
+    const showtimeValue = buildTimestampFromDateAndTime(formData.date, formData.time);
 
     return {
       room: Number(formData.roomId),
       movie: Number(formData.movieId),
-      showtime: baseDate.toISOString(),
+      showtime: showtimeValue,
       language: formData.language || null,
     };
   };
@@ -94,7 +89,7 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
 
       await updateRoom(showtime.id, payload); 
 
-      if (onUpdated) onUpdated();
+      onUpdated?.();
       onCancel();
     } catch (err) {
       console.error("Error al actualizar función", err);
@@ -115,10 +110,11 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
         <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="editMovieId" className="block text-xs font-medium text-gray-700 mb-1">
               Película
             </label>
             <select
+              id="editMovieId"
               name="movieId"
               value={formData.movieId}
               onChange={handleChange}
@@ -144,10 +140,11 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
 
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="editRoomId" className="block text-xs font-medium text-gray-700 mb-1">
               Sala
             </label>
             <select
+              id="editRoomId"
               name="roomId"
               value={formData.roomId}
               onChange={handleChange}
@@ -173,10 +170,34 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
 
           
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="editShowtimeDate" className="block text-xs font-medium text-gray-700 mb-1">
+              Fecha
+            </label>
+            <input
+              id="editShowtimeDate"
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className={`
+                w-full rounded-xl p-2.5 px-3
+                border ${errors.date ? "border-red-500" : "border-gray-300"}
+                bg-gray-50
+                focus:outline-none
+                focus:border-blue-600
+                focus:ring-2 focus:ring-blue-500/50
+                transition
+              `}
+            />
+            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="editShowtimeTime" className="block text-xs font-medium text-gray-700 mb-1">
               Hora
             </label>
             <input
+              id="editShowtimeTime"
               type="time"
               name="time"
               value={formData.time}
@@ -195,10 +216,11 @@ const Editar = ({ showtime, onCancel, onUpdated }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="editShowtimeLanguage" className="block text-xs font-medium text-gray-700 mb-1">
               Idioma
             </label>
             <select
+              id="editShowtimeLanguage"
               name="language"
               value={formData.language}
               onChange={handleChange}
