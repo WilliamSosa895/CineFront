@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from "react";
-import { getAllMovies, getAllRooms, createShowtime } from "../../../api/UserApi";
+import { getAllAdminMovies, getAllRooms, createShowtime } from "../../../api/UserApi";
+import { buildTimestampFromDateAndTime, getInitialDate } from "../../../utils/dataFormat";
 
 const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
   const [movies, setMovies] = useState([]);
@@ -8,6 +9,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
   const [formData, setFormData] = useState({
     movieId: "",
     roomId: "",
+    date: getInitialDate({ showtime: new Date() }) || "",
     time: "",
     language: "",
   });
@@ -17,7 +19,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getAllMovies()
+    getAllAdminMovies()
       .then((res) => {
         const data = res.data || res || [];
         setMovies(Array.isArray(data) ? data : []);
@@ -36,6 +38,7 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
     const newErrors = {};
     if (!formData.movieId) newErrors.movieId = "La película es obligatoria.";
     if (!formData.roomId) newErrors.roomId = "La sala es obligatoria.";
+    if (!formData.date) newErrors.date = "La fecha es obligatoria.";
     if (!formData.time) newErrors.time = "La hora es obligatoria.";
     if (!formData.language) newErrors.language = "El idioma es obligatorio.";
     
@@ -57,16 +60,12 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
   };
 
   const buildPayload = () => {
-    const baseDate = new Date();
-    if (formData.time) {
-      const [hours, minutes] = formData.time.split(":");
-      baseDate.setHours(Number(hours), Number(minutes), 0, 0);
-    }
+    const showtime = buildTimestampFromDateAndTime(formData.date, formData.time);
 
     return {
       room: Number(formData.roomId),
       movie: Number(formData.movieId),
-      showtime: baseDate.toISOString(),
+      showtime,
       language: formData.language || null,
     };
   };
@@ -82,8 +81,8 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
       const payload = buildPayload();
       await createShowtime(payload);
 
-      onCreated && onCreated(); 
-      loadingShowtimes()
+      onCreated?.(); 
+      loadingShowtimes?.()
       setIsAdding();            
     } catch (err) {
       console.error(err);
@@ -109,10 +108,11 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
          
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="movieId" className="block text-xs font-medium text-gray-700 mb-1">
               Película
             </label>
             <select
+              id="movieId"
               name="movieId"
               value={formData.movieId}
               onChange={handleChange}
@@ -136,10 +136,11 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
             {errors.movieId && <p className="text-red-500 text-xs mt-1">{errors.movieId}</p>}
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="roomId" className="block text-xs font-medium text-gray-700 mb-1">
               Sala
             </label>
             <select
+              id="roomId"
               name="roomId"
               value={formData.roomId}
               onChange={handleChange}
@@ -164,10 +165,34 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="showtimeDate" className="block text-xs font-medium text-gray-700 mb-1">
+              Fecha
+            </label>
+            <input
+              id="showtimeDate"
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className={`
+                w-full rounded-xl p-2.5 px-3
+                border ${errors.date ? "border-red-500" : "border-gray-300"}
+                bg-gray-50
+                focus:outline-none
+                focus:border-blue-600
+                focus:ring-2 focus:ring-blue-500/50
+                transition
+              `}
+            />
+            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="showtimeTime" className="block text-xs font-medium text-gray-700 mb-1">
               Hora
             </label>
             <input
+              id="showtimeTime"
               type="time"
               name="time"
               value={formData.time}
@@ -186,10 +211,11 @@ const Agregar = ({ setIsAdding, onCreated, loadingShowtimes }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="showtimeLanguage" className="block text-xs font-medium text-gray-700 mb-1">
               Idioma
             </label>
             <select
+              id="showtimeLanguage"
               name="language"
               value={formData.language}
               onChange={handleChange}

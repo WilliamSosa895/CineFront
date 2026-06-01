@@ -8,6 +8,10 @@ export default function AdminRoute({ children }) {
     return <Navigate to="/" replace />;
   }
 
+  if (!isAdmin) {
+    return <Navigate to="/cartelera" replace />;
+  }
+
 
   return children;
 }

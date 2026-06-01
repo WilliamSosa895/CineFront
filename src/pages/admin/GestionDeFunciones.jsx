@@ -15,9 +15,12 @@ import Agregar from "./components/AgregarFuncion";
 import AgregarPelicula from "./components/AgregarPelicula";
 import EditarPelicula from "./components/EditarPelicula";
 import EliminarPelicula from "./components/EliminarPelicula";
+import GestionProductos from "./GestionProductos.jsx";
+import GestionCombos from "./GestionCombos.jsx";
+import GestionEstrenos from "./GestionEstrenos.jsx";
 
 import {
-  getAllMovies,
+  getAllAdminMovies,
   getShowtimes,
   deleteRoom as deleteRoomApi,
   deleteMovie as deleteMovieApi,
@@ -55,7 +58,7 @@ const GestionDeFunciones = () => {
 
   const loadMovies = () => {
     setLoadingMovies(true);
-    getAllMovies()
+    getAllAdminMovies()
       .then((res) => {
         const data = res.data || [];
         setMovies(Array.isArray(data) ? data : []);
@@ -113,9 +116,9 @@ const GestionDeFunciones = () => {
 
     const term = searchShowtime.toLowerCase();
     return rooms.filter((s) => {
-      const movieTitle = s.movie?.title?.toLowerCase() ?? "";
-      const roomName = s.room?.name?.toLowerCase() ?? "";
-      const language = s.languaje?.toLowerCase() ?? s.language?.toLowerCase() ?? "";
+      const movieTitle = s.movieTitle?.toLowerCase() ?? "";
+      const roomName = s.roomName?.toLowerCase() ?? "";
+      const language = s.movieLanguage?.toLowerCase() ?? s.languaje?.toLowerCase() ?? s.language?.toLowerCase() ?? "";
       return (
         movieTitle.includes(term) ||
         roomName.includes(term) ||
@@ -240,6 +243,12 @@ const GestionDeFunciones = () => {
           
         </>
       )}
+
+      {activeTab === "productos" && <GestionProductos />}
+
+      {activeTab === "combos" && <GestionCombos />}
+
+      {activeTab === "estrenos" && <GestionEstrenos />}
     </main>
   );
 };

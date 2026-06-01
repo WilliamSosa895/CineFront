@@ -39,10 +39,10 @@ const FuncionesTable = ({ onDelete, onEdit, showtimes, loading }) => {
                   {index + 1}
                 </td>
                 <td className="px-4 py-3 text-gray-800 font-medium">
-                  {showtime.movie?.title || "Sin título"}
+                  {showtime.movieTitle || "Sin título"}
                 </td>
                 <td className="px-4 py-3 text-gray-600">
-                  {showtime.room?.name || "Sin Sala"}
+                  {showtime.roomName || "Sin Sala"}
                 </td>
                 <td className="px-4 py-3 text-gray-600">
                   <span className="bg-gray-100 px-2 py-1 rounded text-xs font-semibold">
@@ -50,7 +50,7 @@ const FuncionesTable = ({ onDelete, onEdit, showtimes, loading }) => {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-gray-600">
-                  {showtime.languaje || showtime.language || "-"}
+                  {showtime.movieLanguage || showtime.languaje || showtime.language || "-"}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <div className="flex justify-center items-center gap-2">

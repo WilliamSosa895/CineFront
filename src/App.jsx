@@ -6,9 +6,15 @@ import { Navbar } from "./components/Navbar";
 import LoginPage from "./pages/LoginPage.jsx";
 
 import GestionDeFunciones from "./pages/admin/GestionDeFunciones.jsx";
+import GestionProductos from "./pages/admin/GestionProductos.jsx";
+import GestionCombos from "./pages/admin/GestionCombos.jsx";
+import GestionEstrenos from "./pages/admin/GestionEstrenos.jsx";
+import DetalleEstreno from "./pages/DetalleEstreno.jsx";
 
 import CarteleraPage from "./pages/client/CarteleraPage.jsx";
+import Dulceria from "./pages/client/Dulceria.jsx";
 import FuncionesPage from "./pages/client/FuncionesPage.jsx";
+import ConfirmacionDulceria from "./pages/client/ConfirmacionDulceria.jsx";
 import SeleccionAsientosPage from "./pages/client/SeleccionAsientosPage.jsx";
 import PagoPage from "./pages/client/PagoPage.jsx";
 import ProfilePage from "./pages/client/ProfilePage.jsx";
@@ -60,6 +66,21 @@ function AppShell() {
         <Routes>
           <Route path="/" element={<CarteleraPage />} />
           <Route path="/cartelera" element={<CarteleraPage />} />
+          <Route path="/historial" element={
+            <ClientRoute>
+              <ProfileHistoryPage />
+            </ClientRoute>
+          } />
+
+          <Route path="/dulceria" element={<Dulceria />} />
+          <Route
+            path="/dulceria/confirmar"
+            element={
+              <ClientRoute>
+                <ConfirmacionDulceria />
+              </ClientRoute>
+            }
+          />
 
           <Route
             path="/gestion-funciones"
@@ -69,6 +90,35 @@ function AppShell() {
               </AdminRoute>
             }
           />
+
+          <Route
+            path="/admin/gestion-productos"
+            element={
+              <AdminRoute>
+                <GestionProductos />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/gestion-combos"
+            element={
+              <AdminRoute>
+                <GestionCombos />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/gestion-estrenos"
+            element={
+              <AdminRoute>
+                <GestionEstrenos />
+              </AdminRoute>
+            }
+          />
+
+          <Route path="/estrenos/:id" element={<DetalleEstreno />} />
 
           <Route path="/funciones" element={<FuncionesPage />} />
           <Route path="/asientos" element={<SeleccionAsientosPage />} />
@@ -80,14 +130,6 @@ function AppShell() {
             element={
               <ClientRoute>
                 <ProfilePage />
-              </ClientRoute>
-            }
-          />
-          <Route
-            path="/historial"
-            element={
-              <ClientRoute>
-                <ProfileHistoryPage />
               </ClientRoute>
             }
           />
