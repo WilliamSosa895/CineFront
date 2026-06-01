@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 const ModalCompraExitosa = ({
   onClose,
+  onPrimaryAction,
+  onSecondaryAction,
+  primaryActionLabel = "Volver a cartelera",
+  secondaryActionLabel,
+  title = "¡Compra exitosa!",
+  message = "Tu compra ha sido confirmada correctamente.",
+  footerMessage = "El comprobante ha sido enviado a tu correo electrónico.",
+  details,
   movieTitle,
   hall,
   seats,
@@ -11,12 +19,29 @@ const ModalCompraExitosa = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleGoHome = () => {
+  const handlePrimaryAction = () => {
     if (onClose) onClose();
+    if (onPrimaryAction) {
+      onPrimaryAction();
+      return;
+    }
     navigate("/");
   };
 
+  const handleSecondaryAction = () => {
+    if (onClose) onClose();
+    if (onSecondaryAction) onSecondaryAction();
+  };
+
   const safeSeats = Array.isArray(seats) ? seats : seats ? [seats] : [];
+  const normalizedDetails = Array.isArray(details)
+    ? details
+    : [
+        movieTitle ? { label: "Película", value: movieTitle } : null,
+        hall ? { label: "Sala", value: hall } : null,
+        safeSeats.length > 0 ? { label: "Asientos", value: safeSeats.join(", ") } : null,
+        folio ? { label: "Folio", value: folio } : null,
+      ].filter(Boolean);
 
   const formatMoney = (value) => {
     if (typeof value === "number" && Number.isFinite(value)) return value.toFixed(2);
@@ -71,36 +96,22 @@ const ModalCompraExitosa = ({
           </div>
 
           <h2 className="text-center m-0 text-[1.25rem] font-semibold text-gray-900">
-            ¡Compra exitosa!
+            {title}
           </h2>
 
           <p className="text-center text-[0.9rem] text-gray-600 mt-1 mb-4">
-            Tu compra ha sido confirmada correctamente.
+            {message}
           </p>
 
           <hr className="my-3" />
 
           <div className="mb-3 text-[0.9rem] space-y-1.5">
-            <p className="my-[0.15rem]">
-              <strong className="text-gray-800">Película:</strong>{" "}
-              <span className="text-gray-700">{movieTitle || "Película"}</span>
-            </p>
-            <p className="my-[0.15rem] flex items-center gap-1.5">
-              <strong className="text-gray-800">Sala:</strong>
-              <span className="inline-flex items-center px-2 py-[0.1rem] rounded-full bg-gray-100 text-gray-700 text-[0.8rem]">
-                {hall || "SALA"}
-              </span>
-            </p>
-            <p className="my-[0.15rem]">
-              <strong className="text-gray-800">Asientos:</strong>{" "}
-              <span className="text-gray-700">
-                {safeSeats.length > 0 ? safeSeats.join(", ") : "—"}
-              </span>
-            </p>
-            <p className="my-[0.15rem]">
-              <strong className="text-gray-800">Folio:</strong>{" "}
-              <span className="text-gray-700">{folio || "—"}</span>
-            </p>
+            {normalizedDetails.map((detail) => (
+              <p key={detail.label} className="my-[0.15rem]">
+                <strong className="text-gray-800">{detail.label}:</strong>{" "}
+                <span className="text-gray-700">{detail.value || "—"}</span>
+              </p>
+            ))}
           </div>
 
           <div className="mt-2 mb-4">
@@ -120,12 +131,12 @@ const ModalCompraExitosa = ({
           </div>
 
           <p className="text-center text-[0.85rem] mb-[1.2rem] text-gray-500">
-            El boleto ha sido enviado a tu correo electrónico.
+            {footerMessage}
           </p>
 
           <div className="flex flex-col gap-2">
             <button
-              onClick={handleGoHome}
+              onClick={handlePrimaryAction}
               className="
                 w-full py-[0.55rem]
                 border border-gray-300
@@ -136,8 +147,25 @@ const ModalCompraExitosa = ({
                 transition
               "
             >
-              Volver a cartelera
+              {primaryActionLabel}
             </button>
+
+            {secondaryActionLabel && (
+              <button
+                onClick={handleSecondaryAction}
+                className="
+                  w-full py-[0.55rem]
+                  border border-transparent
+                  rounded-[8px]
+                  bg-purple-600
+                  text-[0.9rem] text-white
+                  hover:bg-purple-700
+                  transition
+                "
+              >
+                {secondaryActionLabel}
+              </button>
+            )}
           </div>
         </div>
       </div>

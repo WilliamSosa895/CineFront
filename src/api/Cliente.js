@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env?.VITE_API_URL || 'https://cinema-pgmd.onrender.com',
+  baseURL: import.meta.env?.VITE_API_URL || 'https://cinemaback-latest.onrender.com',
 });
 
 apiClient.interceptors.request.use(

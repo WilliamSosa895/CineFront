@@ -15,6 +15,9 @@ import Agregar from "./components/AgregarFuncion";
 import AgregarPelicula from "./components/AgregarPelicula";
 import EditarPelicula from "./components/EditarPelicula";
 import EliminarPelicula from "./components/EliminarPelicula";
+import GestionProductos from "./GestionProductos.jsx";
+import GestionCombos from "./GestionCombos.jsx";
+import GestionEstrenos from "./GestionEstrenos.jsx";
 
 import {
   getAllAdminMovies,
@@ -240,6 +243,12 @@ const GestionDeFunciones = () => {
           
         </>
       )}
+
+      {activeTab === "productos" && <GestionProductos />}
+
+      {activeTab === "combos" && <GestionCombos />}
+
+      {activeTab === "estrenos" && <GestionEstrenos />}
     </main>
   );
 };
