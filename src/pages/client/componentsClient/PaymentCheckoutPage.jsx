@@ -22,6 +22,24 @@ const sanitizeCardName = (value = "") =>
     .replace(/\s+/g, " ")
     .trimStart();
 
+const getErrorMessage = (error) => {
+  const data = error?.response?.data;
+
+  if (typeof data === "string") return data;
+
+  if (data && typeof data === "object") {
+    if (typeof data.message === "string") return data.message;
+    if (typeof data.error === "string") return data.error;
+    return "Ocurrió un error al procesar tu pago.";
+  }
+
+  if (typeof error?.message === "string" && error.message.trim()) {
+    return error.message;
+  }
+
+  return "No se pudo procesar tu pago.";
+};
+
 const PaymentCheckoutPage = ({
   backTo,
   backLabel,
@@ -165,8 +183,7 @@ const PaymentCheckoutPage = ({
       console.error(err);
       setErrors((prev) => ({
         ...prev,
-        submit:
-          err?.response?.data || err?.message || "No se pudo procesar tu pago.",
+        submit: getErrorMessage(err),
       }));
     }
   };
