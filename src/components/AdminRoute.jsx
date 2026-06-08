@@ -1,5 +1,17 @@
-﻿const AdminRoute = ({ children }) => {
-  return children;
-};
+﻿import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export default AdminRoute;
+export default function AdminRoute({ children }) {
+  const { isLogged, isAdmin } = useAuth();
+
+  if (!isLogged) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/cartelera" replace />;
+  }
+
+
+  return children;
+}

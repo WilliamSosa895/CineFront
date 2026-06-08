@@ -29,9 +29,24 @@ const Navbar = ({ setIsTryLogin }) => {
         </Link>
 
         {isLogged && (
-          <Link to="/perfil">
+          <>
+            <Link to="/perfil">
+              <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
+                Mi cuenta
+              </button>
+            </Link>
+            <Link to="/dulceria">
+              <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
+                Dulcería
+              </button>
+            </Link>
+          </>
+        )}
+
+        {!isLogged && (
+          <Link to="/dulceria">
             <button className="text-white font-bold px-3 py-1 rounded transition-colors duration-200 ease-out origin-center hover:text-purple-600 hover:scale-105 cursor-pointer">
-              Mi cuenta
+              Dulcería
             </button>
           </Link>
         )}
@@ -39,9 +54,11 @@ const Navbar = ({ setIsTryLogin }) => {
 
       <div className="flex gap-5">
         {isLogged && isAdmin && (
-          <Link to="/gestion-funciones">
-            <button className={adminButtonClass}>Administrar</button>
-          </Link>
+          <>
+            <Link to="/gestion-funciones">
+              <button className={adminButtonClass}>Administrar</button>
+            </Link>
+          </>
         )}
 
         {isLogged ? (

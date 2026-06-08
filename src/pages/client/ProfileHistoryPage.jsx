@@ -1,5 +1,1 @@
-﻿const ProfileHistoryPage = () => {
-  return null;
-};
-
-export default ProfileHistoryPage;
+export { default } from "../Historial.jsx";
